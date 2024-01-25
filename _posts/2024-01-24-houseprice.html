@@ -1,0 +1,146 @@
+---
+layout: post
+title: "Building a production machine learning system"
+subtitle: "to estimate the price of a house."
+date: 2024-01-24 10:00:00 -0500
+background: '/img/posts/House-Price.jpg'
+---
+
+<script>
+    // define the callAPI function that takes house features as parameters
+    var callAPI = (bedrooms,bathrooms,sqft_living,waterfront,view,grade,sqft_living15)=>{
+        // instantiate a headers object
+        var myHeaders = new Headers();
+        // add content type header to object
+        myHeaders.append("Content-Type", "application/json");
+        let bedrooms_val = +bedrooms;
+        let bathrooms_val = +bathrooms;
+        let sqft_living_val = +sqft_living;
+        let waterfront_val = +waterfront;
+        let view_val = +view;
+        let grade_val = +grade;
+        let sqft_living15_val = +sqft_living15;
+        // using built in JSON utility package turn object to string and store in a variable
+        var raw = JSON.stringify({"bedrooms":bedrooms_val,"bathrooms":bathrooms_val,"sqft_living":sqft_living_val,"waterfront":waterfront_val,"view":view_val,"grade":grade_val,"sqft_living15":sqft_living15_val});
+        // create a JSON object with parameters for API call and store in a variable
+        var requestOptions = {
+            method: 'POST',
+            headers: myHeaders,
+            body: raw,
+            redirect: 'follow'
+        };
+        console.log("Headers:", myHeaders);
+        console.log("Content-Type:", myHeaders.get("Content-Type"));
+        
+        //Make the API call for regression model inference
+        fetch("https://av5ea7yq90.execute-api.us-east-1.amazonaws.com/Prod/calculate_price/", requestOptions)
+        .then(response => response.json())  // Parse the first level of JSON
+        .then(data => {
+            // The 'data' key contains a JSON string, so parse it to get the actual object
+            const prediction = JSON.parse(data.prediction);
+
+            // Format the prediction as a currency
+        const formattedPrediction = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: 'USD',
+            maximumFractionDigits: 0  // No decimal places
+        }).format(prediction);
+
+            // Select the predictionResult element and update its content
+            document.getElementById('predictionResult').innerText = 'Prediction: ' + formattedPrediction;
+        })
+        .catch(error => console.log('error', error));
+    }
+</script>
+
+<div class="featform" style="margin: 20px;">
+    <h2>Home Price</h2>
+    <p>Let's start with the fun part, enter the attributes of your home and call the API to get a predicition. If you're unsure of a value leave it blank and the model will impute the value based on the training dataset, but note that this will impact the precision of your estimate. Scroll below for more information on building this out.</p>
+
+    <form>
+        <input type="number" id="bedrooms_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="100" step="1">
+        <label for="bedrooms_form" style="display: inline-block;">: Bedrooms</label><br>
+
+        <input type="number" id="bathrooms_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="100" step="0.25">
+        <label for="bathrooms_form" style="display: inline-block;">: Bathrooms</label><br>
+
+        <input type="number" id="sqft_living_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="100000" step="1">
+        <label for="sqft_living_form" style="display: inline-block;">: Square Feet Living Space</label><br>
+
+        <input type="number" id="waterfront_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="1" step="1">
+        <label for="waterfront_form" style="display: inline-block;">: Waterfront Access (No: 0, Yes: 1)</label><br>
+
+        <input type="number" id="view_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="4" step="1">
+        <label for="view_form" style="display: inline-block;">: Scenic Views (None: 0, Exceptional: 4)</label><br>
+
+        <input type="number" id="grade_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="13" step="1">
+        <label for="grade_form" style="display: inline-block;">: Construction Grade</label><br>
+
+        <input type="number" id="sqft_living15_form" style="display: inline-block; margin-right: 10px; margin-bottom: 10px; width: 120px;" min="0" max="100000" step="1">
+        <label for="sqft_living15_form" style="display: inline-block;">: Square Feet Living Space of 15 Neighbors (Avg)</label><br>
+
+        <!-- set button onClick method to call function we defined passing input values as parameters -->
+        <!-- <button type="button" onclick="callAPI(document.getElementById('bedrooms_form').value,document.getElementById('bathrooms_form').value,document.getElementById('sqft_living_form').value,document.getElementById('waterfront_form').value,document.getElementById('view_form').value,document.getElementById('grade_form').value,document.getElementById('sqft_living15_form').value)" style="margin-top: 20px;">Call ML Model API</button> -->
+    </form>
+</div>
+
+<!-- 1 Cabin, 2 Substandard, 3 Poor, 4 Low, 5 Fair, 6 Low Average, 7 Average, 8 Good, 9 Better, 10 Very Good, 11 Excellent, 12 Luxury, 13 Mansion -->
+
+<div style="margin: 20px;">
+    <button type="button" onclick="callAPI(document.getElementById('bedrooms_form').value,document.getElementById('bathrooms_form').value,document.getElementById('sqft_living_form').value,document.getElementById('waterfront_form').value,document.getElementById('view_form').value,document.getElementById('grade_form').value,document.getElementById('sqft_living15_form').value)" style="margin-top: 10px;">Call ML Model API</button>
+    <span style="margin-left: 10px; font-size: 0.6em;">API call < 5 seconds</span>
+</div>
+
+
+<!-- Container to display the prediction -->
+<div id="predictionResult" style="border: 1px solid black; padding: 10px; width: 350px; margin: 20px;">
+    Prediction will be shown here.
+</div>
+
+<h2 class="section-heading">Building a Production Machine Learning System - Draft version, still working to flesh this out further!</h2>
+
+<blockquote class="blockquote">Before you even begin...</blockquote>
+
+<p>The first rule of handling a problem is not to start with machine learning (ML). There may be easier, cheaper solutions that acheive similar results. At the very least, one should consider building the structure for a simple system and then adding in ML later, with more data.</p>
+
+<p>Obtaining optimal data is one of the biggest challenges with any analytics project. I used the <a href="https://www.kaggle.com/datasets/harlfoxem/housesalesprediction">King County House Dataset</a> for this, but there are no "datasets" in the real world. Just messy, unstructured, incomplete, biased data. There is an element of data engineering to every ML system.</p>
+
+<p>Even with a tidy dataset for this illustrative project, there are still many enhancements that could be made. There is so much more that goes into the system than just the model. The point of this exercise for me was to develop the skills to build a ML system, not just a model, and this isn't a startup business for me.</p>
+
+<p>With that, let's dive into the process. I used AWS Cloud Services, specifically, Amazon Sagemaker for this project.</p>
+
+<h2 class="section-heading">Exploratory Data Analysis</h2>
+
+<p>We need to know what we have in the data we're working with. We can examine the columns, display the data distribution, identify null values, and review the correlation matrix. This helps us decide which type of model to use and which attributes have the most impact on the price of the house. It also helps us make a plan for how our model features may need to be transformed or encoded to work best in the model.</p>
+
+<p>Let's take a look at an overview of the steps involved in a training pipeline.</p>
+
+<img class="img-fluid" src="/img/posts/training.png" alt="Demo Image">
+<span class="caption text-muted">Overview of the training pipeline</span>
+
+<h2 class="section-heading">Preprocessing</h2>
+
+<p>I used a preprocessing pipeline to split and transformation the data. The splits are necessary for the training and evaluation, and the transformers will be used later after we train and deploy our model, as we will need to apply the same transformation to incoming data when serving predicitions.</p>
+
+
+<p>Under the hood I used a Scikit-Learn Pipeline for the transformations, and a Processing Step with an SKLearnProcessor to execute a preprocessing script.</p>
+
+<h2 class="section-heading">Training</h2>
+
+<p>Next comes the training step. This is an iterative process that involves lots of tweaks, data exploration, and going back to adjust the prepocessing. Much more could be written, but for the sake of brevity, a TensorFlow Keras Sequential Neural Network estimator was used to traing a regression model on a subset of attributes, and added as a Training Step to the pipeline.</p>
+
+<h2 class="section-heading">Evaluation and Version</h2>
+
+<!-- <blockquote class="blockquote">The dreams of yesterday are the hopes of today and the reality of tomorrow. Science has not yet mastered prophecy. We predict too much for the next year and yet far too little for the next ten.</blockquote> -->
+
+<p>The model was evaluated on the test data set, and a deployment condition added as a pipeline step. This way, only models that perform adequately on data not seen during training can be registered. If the model meets the condition, the version is incremented and the model is registered with Amazon Sagemaker.</p>
+
+<h2 class="section-heading">Deployment and Serving</h2>
+
+<p>Deployment involves pre and post processing and an endpoint.</p>
+
+<h2 class="section-heading">Model Monitoring</h2>
+
+<p>Every model is a hero on day one, but it is important to monitor performance to catch drift. It is important to compare the production data through endpoint traffic with the baseline data used to train the model for data drift. Additionally, the model performance can be monitored by comparing the endpoint predictions with some form of ground truth. This process involves labelling of some kind, but is critical to ensure the model performs well over time and can be retrained as needed. </p>
+
+<!-- <p>Placeholder text by <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by <a href="https://unsplash.com/">Unsplash</a>.</p> -->

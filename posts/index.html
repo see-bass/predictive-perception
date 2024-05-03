@@ -4,6 +4,18 @@ title: Posts
 background: '/img/bg-post.jpg'
 ---
 
+<head>
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-QQPZDCQ0V2"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-QQPZDCQ0V2');
+  </script>
+</head>
+
 {% for post in paginator.posts %}
 
 <article class="post-preview">

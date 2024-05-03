@@ -169,7 +169,7 @@ background: '/img/posts/House-Price.jpg'
 <br>
 <p>Before you use this information to list your home for sale... read about the project below. There are many factors that influence the value of a home and not all were considered in this illustrative example of an ML system.</p>
 
-<h2 class="section-heading">Building a Production Machine Learning System - DRAFT VERSION</h2>
+<h2 class="section-heading">Building a Production Machine Learning System</h2>
 
 <blockquote class="blockquote">Before you even begin...</blockquote>
 
@@ -209,11 +209,11 @@ background: '/img/posts/House-Price.jpg'
 
 <h2 class="section-heading">Deployment and Serving</h2>
 
-<p>Deployment involves pre and post processing and an endpoint.</p>
+<p>Deployment involves packaging the pre and post processing into pipeline steps. What is provided and returned by the API must be transformed into a format that the nueral network model can ingest, including any encoding or scaling that was done. Once the full pipeline is configured an endpoint can be deployed, including any reviews and sign offs as necessary, and finally the model can be used to serve predictions.</p>
 
 <h2 class="section-heading">Model Monitoring</h2>
 
-<p>Every model is a hero on day one, but it is important to monitor performance to catch drift. It is important to compare the production data through endpoint traffic with the baseline data used to train the model for data drift. Additionally, the model performance can be monitored by comparing the endpoint predictions with some form of ground truth. This process involves labelling of some kind, but is critical to ensure the model performs well over time and can be retrained as needed. </p>
+<p>Every model is a hero on day one, but it is important to monitor performance to catch drift. We must compare the endpoint traffic production data with the baseline data used to train the model to be able to monitor data drift. Additionally, the model performance can be monitored by comparing the endpoint predictions with some form of ground truth. This process involves labelling of some kind, but is critical to ensure the model performs well over time and can be retrained as needed. </p>
 
 <!-- <p>Placeholder text by <a href="http://spaceipsum.com/">Space Ipsum</a>. Photographs by <a href="https://unsplash.com/">Unsplash</a>.</p> -->
 

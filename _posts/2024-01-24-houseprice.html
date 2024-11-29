@@ -78,30 +78,33 @@ background: '/img/posts/House-Price.jpg'
         };
         console.log("Headers:", myHeaders);
         console.log("Content-Type:", myHeaders.get("Content-Type"));
+
+        // Disabled API message
+        document.getElementById('predictionResult').innerHTML = 'The API call has been disabled to reduce cloud service expenses.';
         
-        //Make the API call for regression model inference
-        fetch("https://av5ea7yq90.execute-api.us-east-1.amazonaws.com/Prod/calculate_price/", requestOptions)
-        .then(response => response.json())  // Parse the first level of JSON
-        .then(data => {
-            // The 'data' key contains a JSON string, so parse it to get the actual object
-            const prediction = JSON.parse(data.prediction);
+        // //Make the API call for regression model inference
+        // fetch("https://av5ea7yq90.execute-api.us-east-1.amazonaws.com/Prod/calculate_price/", requestOptions)
+        // .then(response => response.json())  // Parse the first level of JSON
+        // .then(data => {
+        //     // The 'data' key contains a JSON string, so parse it to get the actual object
+        //     const prediction = JSON.parse(data.prediction);
 
-            // Format the prediction as a currency
-        const formattedPrediction = new Intl.NumberFormat('en-US', {
-            style: 'currency',
-            currency: 'USD',
-            maximumFractionDigits: 0  // No decimal places
-        }).format(prediction);
+        //     // Format the prediction as a currency
+        // const formattedPrediction = new Intl.NumberFormat('en-US', {
+        //     style: 'currency',
+        //     currency: 'USD',
+        //     maximumFractionDigits: 0  // No decimal places
+        // }).format(prediction);
 
-            // Select the predictionResult element and update its content
-            document.getElementById('predictionResult').innerText = 'Prediction: ' + formattedPrediction;
-        })
-        // .catch(error => console.log('error', error));
-        .catch((error) => {
-            // Handle any errors
-            console.log('error', error)
-            document.getElementById('predictionResult').innerHTML = 'Try again, the API may have timed out.';
-        });
+        //     // Select the predictionResult element and update its content
+        //     document.getElementById('predictionResult').innerText = 'Prediction: ' + formattedPrediction;
+        // })
+        // // .catch(error => console.log('error', error));
+        // .catch((error) => {
+        //     // Handle any errors
+        //     console.log('error', error)
+        //     document.getElementById('predictionResult').innerHTML = 'Try again, the API may have timed out.';
+        // });
     }
 </script>
 
